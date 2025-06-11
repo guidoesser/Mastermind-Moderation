@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(238, 83%, 60%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(158, 64%, 52%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(43, 96%, 56%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(238, 83%, 60%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Custom styles for meeting phases */
+.phase-indicator {
+  transition: all 0.3s ease;
+}
+
+.phase-active {
+  @apply bg-primary text-white;
+}
+
+.phase-completed {
+  @apply bg-secondary text-white;
+}
+
+.phase-pending {
+  @apply bg-gray-300 text-gray-500;
+}
+
+/* Hot seat indicator styles */
+.hot-seat-indicator {
+  @apply bg-blue-50 border-blue-200 border;
+}
+
+.next-turn-badge {
+  @apply bg-amber-50 text-amber-700 border border-amber-200;
+}
+
+/* Video conference overlay */
+.video-controls-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Timer styles */
+.timer-display {
+  @apply bg-blue-50 text-blue-700 border border-blue-200;
+}
+
+/* Feedback form styles */
+.feedback-section {
+  @apply bg-gray-50;
+}
+
+/* Participant avatar styles */
+.participant-avatar {
+  @apply ring-2 ring-white shadow-sm;
+}
+
+.participant-avatar.speaking {
+  @apply ring-primary ring-4;
+}
+
+.participant-avatar.next {
+  @apply ring-accent ring-2;
+}

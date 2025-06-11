@@ -80,6 +80,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/meetings/:meetingId/participants/check/:name", async (req, res) => {
+    try {
+      const meetingId = parseInt(req.params.meetingId);
+      const name = req.params.name;
+      const participant = await storage.getParticipantByNameAndMeeting(name, meetingId);
+      res.json({ exists: !!participant, participant });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid request" });
+    }
+  });
+
   app.patch("/api/participants/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);

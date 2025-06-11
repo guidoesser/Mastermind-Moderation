@@ -10,6 +10,7 @@ export interface IStorage {
   // Participant operations
   addParticipant(participant: InsertParticipant): Promise<Participant>;
   getParticipantsByMeeting(meetingId: number): Promise<Participant[]>;
+  getParticipantByNameAndMeeting(name: string, meetingId: number): Promise<Participant | undefined>;
   updateParticipant(id: number, updates: Partial<Participant>): Promise<Participant | undefined>;
   removeParticipant(id: number): Promise<boolean>;
   
@@ -38,10 +39,14 @@ export class MemStorage implements IStorage {
   async createMeeting(insertMeeting: InsertMeeting): Promise<Meeting> {
     const id = this.currentMeetingId++;
     const meeting: Meeting = {
-      ...insertMeeting,
       id,
-      createdAt: new Date(),
+      title: insertMeeting.title,
+      roomId: insertMeeting.roomId,
+      currentPhase: insertMeeting.currentPhase || "check-in",
       phaseStartTime: new Date(),
+      isActive: insertMeeting.isActive ?? true,
+      isRecording: insertMeeting.isRecording ?? false,
+      createdAt: new Date(),
     };
     this.meetings.set(id, meeting);
     return meeting;
@@ -69,8 +74,11 @@ export class MemStorage implements IStorage {
   async addParticipant(insertParticipant: InsertParticipant): Promise<Participant> {
     const id = this.currentParticipantId++;
     const participant: Participant = {
-      ...insertParticipant,
       id,
+      name: insertParticipant.name,
+      meetingId: insertParticipant.meetingId,
+      avatar: insertParticipant.avatar || null,
+      status: insertParticipant.status || "waiting",
       joinedAt: new Date(),
     };
     this.participants.set(id, participant);
@@ -80,6 +88,12 @@ export class MemStorage implements IStorage {
   async getParticipantsByMeeting(meetingId: number): Promise<Participant[]> {
     return Array.from(this.participants.values()).filter(
       (participant) => participant.meetingId === meetingId
+    );
+  }
+
+  async getParticipantByNameAndMeeting(name: string, meetingId: number): Promise<Participant | undefined> {
+    return Array.from(this.participants.values()).find(
+      (participant) => participant.name === name && participant.meetingId === meetingId
     );
   }
 
@@ -99,8 +113,13 @@ export class MemStorage implements IStorage {
   async addFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
     const id = this.currentFeedbackId++;
     const feedbackItem: Feedback = {
-      ...insertFeedback,
       id,
+      meetingId: insertFeedback.meetingId,
+      participantId: insertFeedback.participantId,
+      phase: insertFeedback.phase,
+      whatWentWell: insertFeedback.whatWentWell || null,
+      challenges: insertFeedback.challenges || null,
+      actionItems: insertFeedback.actionItems || null,
       createdAt: new Date(),
     };
     this.feedback.set(id, feedbackItem);

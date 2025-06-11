@@ -34,6 +34,18 @@ export class MemStorage implements IStorage {
     this.currentMeetingId = 1;
     this.currentParticipantId = 1;
     this.currentFeedbackId = 1;
+    
+    // Clear any existing data on restart
+    this.clearAll();
+  }
+
+  private clearAll() {
+    this.meetings.clear();
+    this.participants.clear();
+    this.feedback.clear();
+    this.currentMeetingId = 1;
+    this.currentParticipantId = 1;
+    this.currentFeedbackId = 1;
   }
 
   async createMeeting(insertMeeting: InsertMeeting): Promise<Meeting> {

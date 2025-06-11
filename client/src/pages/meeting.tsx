@@ -68,34 +68,7 @@ export default function Meeting() {
     }
   }, [meetingData, meeting, meetingLoading, createMeetingMutation, currentRoomId]);
 
-  // Add current user as participant when meeting is available
-  const addParticipantMutation = useMutation({
-    mutationFn: async (participantData: { name: string; meetingId: number }) => {
-      const response = await apiRequest("POST", "/api/participants", participantData);
-      return response.json();
-    },
-    onSuccess: () => {
-      const currentMeeting = meeting || meetingData;
-      if (currentMeeting) {
-        queryClient.invalidateQueries({ queryKey: [`/api/meetings/${currentMeeting.id}/participants`] });
-      }
-    },
-  });
 
-  useEffect(() => {
-    const currentMeeting = meeting || meetingData;
-    if (currentMeeting && !addParticipantMutation.isPending) {
-      // Check if current user is already in participants
-      const currentUserExists = participants.some(p => p.name === "You");
-      
-      if (!currentUserExists) {
-        addParticipantMutation.mutate({
-          name: "You",
-          meetingId: currentMeeting.id,
-        });
-      }
-    }
-  }, [meeting, meetingData, participants, addParticipantMutation]);
 
   const handleToggleRecording = () => {
     setIsRecording(!isRecording);
@@ -117,22 +90,26 @@ export default function Meeting() {
     }
   };
 
-  const currentMeeting = meeting || meetingData;
+  const currentMeeting = meeting || meetingData as MeetingType;
+  const [participantsInitialized, setParticipantsInitialized] = useState(false);
 
-  // Add some demo participants when meeting is created
-  const addDemoParticipantsMutation = useMutation({
+  // Add participants when meeting is created (only once)
+  const addParticipantsMutation = useMutation({
     mutationFn: async (participants: Array<{ name: string; meetingId: number; status?: string }>) => {
       const promises = participants.map(p => 
         apiRequest("POST", "/api/participants", p).then(res => res.json())
       );
       return Promise.all(promises);
     },
+    onSuccess: () => {
+      setParticipantsInitialized(true);
+    },
   });
 
   useEffect(() => {
-    if (currentMeeting && participants.length === 0 && !addDemoParticipantsMutation.isPending) {
-      // Add demo participants including the current user
-      addDemoParticipantsMutation.mutate([
+    if (currentMeeting?.id && participants.length === 0 && !participantsInitialized && !addParticipantsMutation.isPending) {
+      // Add participants including the current user
+      addParticipantsMutation.mutate([
         { name: "You", meetingId: currentMeeting.id, status: "waiting" },
         { name: "Sophie", meetingId: currentMeeting.id, status: "speaking" },
         { name: "Michael", meetingId: currentMeeting.id, status: "next" },
@@ -140,7 +117,7 @@ export default function Meeting() {
         { name: "Olivia", meetingId: currentMeeting.id, status: "waiting" },
       ]);
     }
-  }, [currentMeeting, participants, addDemoParticipantsMutation]);
+  }, [currentMeeting?.id, participants.length, participantsInitialized, addParticipantsMutation]);
 
   if (meetingLoading || createMeetingMutation.isPending) {
     return (

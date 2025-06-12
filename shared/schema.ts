@@ -122,6 +122,8 @@ export const insertSessionSchema = createInsertSchema(sessions).omit({
   createdAt: true,
 });
 
+export const updateSessionSchema = insertSessionSchema.partial();
+
 export const insertAgendaSchema = createInsertSchema(agendas).omit({
   id: true,
   createdAt: true,

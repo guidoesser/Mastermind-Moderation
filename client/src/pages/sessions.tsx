@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { insertSessionSchema, type Session, type InsertSession } from "@shared/schema";
+import { insertSessionSchema, updateSessionSchema, type Session, type InsertSession } from "@shared/schema";
 
 // Utility function to handle datetime conversion for local input
 function formatDateForInput(date: Date | string | null | undefined): string {
@@ -75,10 +75,11 @@ export default function SessionsPage() {
         description: "Session has been updated successfully"
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Update session error:", error);
       toast({
-        title: "Error",
-        description: "Failed to update session",
+        title: "Error", 
+        description: error?.message || "Failed to update session",
         variant: "destructive"
       });
     }
@@ -134,7 +135,7 @@ export default function SessionsPage() {
     form.reset({
       title: session.title,
       description: session.description || "",
-      scheduledAt: session.scheduledAt || new Date()
+      scheduledAt: session.scheduledAt ? new Date(session.scheduledAt) : new Date()
     });
   };
 

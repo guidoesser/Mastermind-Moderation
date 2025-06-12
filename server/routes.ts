@@ -144,11 +144,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Session routes
   app.post("/api/sessions", async (req, res) => {
     try {
+      console.log("Session creation request body:", req.body);
       const sessionData = insertSessionSchema.parse(req.body);
+      console.log("Parsed session data:", sessionData);
       const session = await storage.createSession(sessionData);
       res.json(session);
     } catch (error) {
-      res.status(400).json({ error: "Invalid session data" });
+      console.error("Session creation error:", error);
+      res.status(400).json({ error: "Invalid session data", details: error instanceof Error ? error.message : String(error) });
     }
   });
 

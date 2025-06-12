@@ -12,6 +12,7 @@ import {
   Phone,
   Settings,
   Users,
+  User,
   Volume2,
   VolumeX
 } from "lucide-react";

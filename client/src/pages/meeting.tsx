@@ -12,6 +12,7 @@ import VideoConference from "@/components/video-conference";
 import AgendaProgress from "@/components/agenda-progress";
 import ParticipantsList from "@/components/participants-list";
 import FeedbackForm from "@/components/feedback-form";
+import SimpleRecordingControls from "@/components/simple-recording-controls";
 import type { Meeting as MeetingType, Participant } from "@shared/schema";
 
 export default function Meeting() {
@@ -180,6 +181,15 @@ export default function Meeting() {
 
         {/* Control Panel */}
         <div className="w-full lg:w-96 bg-white border-l border-gray-200 flex flex-col">
+          {/* Recording Controls */}
+          <div className="p-4 border-b border-gray-200">
+            <SimpleRecordingControls
+              meetingId={currentMeeting?.id || 1}
+              isRecording={isRecording}
+              onRecordingStateChange={setIsRecording}
+            />
+          </div>
+
           {/* Agenda Progress */}
           <AgendaProgress
             currentPhase={currentMeeting?.currentPhase || "check-in"}

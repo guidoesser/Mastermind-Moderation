@@ -51,15 +51,15 @@ export default function SessionDetailPage() {
     enabled: !!sessionId
   });
 
-  // Fetch agenda points for all agendas
+  // Fetch agenda points for this session
   const { data: allAgendaPoints } = useQuery<AgendaPoint[]>({
-    queryKey: ["/api/agenda-points"],
+    queryKey: ["/api/sessions", sessionId, "agenda-points"],
     enabled: !!sessionId
   });
 
-  // Fetch all actions
+  // Fetch actions for this session
   const { data: allActions } = useQuery<Action[]>({
-    queryKey: ["/api/actions"],
+    queryKey: ["/api/sessions", sessionId, "actions"],
     enabled: !!sessionId
   });
 
@@ -91,7 +91,7 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agenda-points"] });
       setCreatePointForAgenda(null);
       agendaPointForm.reset();
       toast({ title: "Agenda Point Created", description: "New agenda point has been created successfully" });
@@ -112,7 +112,7 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "actions"] });
       setCreateActionForPoint(null);
       actionForm.reset();
       toast({ title: "Action Created", description: "New action has been created successfully" });
@@ -154,7 +154,7 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agenda-points"] });
       setEditingPoint(null);
       toast({ title: "Agenda Point Updated", description: "Agenda point has been updated successfully" });
     },
@@ -174,7 +174,7 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "actions"] });
       setEditingAction(null);
       toast({ title: "Action Updated", description: "Action has been updated successfully" });
     },
@@ -214,7 +214,8 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agenda-points"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "actions"] });
       toast({ title: "Agenda Point Deleted", description: "Agenda point has been deleted successfully" });
     },
     onError: (error) => {

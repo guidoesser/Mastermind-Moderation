@@ -295,6 +295,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/sessions/:sessionId/agenda-points", async (req, res) => {
+    try {
+      const sessionId = parseInt(req.params.sessionId);
+      const agendas = await storage.getAgendasBySession(sessionId);
+      const agendaPoints = [];
+      
+      for (const agenda of agendas) {
+        const points = await storage.getAgendaPointsByAgenda(agenda.id);
+        agendaPoints.push(...points);
+      }
+      
+      res.json(agendaPoints);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid session ID" });
+    }
+  });
+
   app.get("/api/agendas/:agendaId/agenda-points", async (req, res) => {
     try {
       const agendaId = parseInt(req.params.agendaId);
@@ -352,6 +369,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(action);
     } catch (error) {
       res.status(400).json({ error: "Invalid action data" });
+    }
+  });
+
+  app.get("/api/sessions/:sessionId/actions", async (req, res) => {
+    try {
+      const sessionId = parseInt(req.params.sessionId);
+      const agendas = await storage.getAgendasBySession(sessionId);
+      const actions = [];
+      
+      for (const agenda of agendas) {
+        const agendaPoints = await storage.getAgendaPointsByAgenda(agenda.id);
+        for (const point of agendaPoints) {
+          const pointActions = await storage.getActionsByAgendaPoint(point.id);
+          actions.push(...pointActions);
+        }
+      }
+      
+      res.json(actions);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid session ID" });
     }
   });
 

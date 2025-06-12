@@ -65,7 +65,10 @@ export default function SessionDetailPage() {
 
   // Create mutations
   const createAgendaMutation = useMutation({
-    mutationFn: (data: InsertAgenda) => apiRequest("/api/agendas", "POST", data),
+    mutationFn: async (data: InsertAgenda) => {
+      const response = await apiRequest("/api/agendas", "POST", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       setIsCreateAgendaOpen(false);
@@ -83,7 +86,10 @@ export default function SessionDetailPage() {
   });
 
   const createAgendaPointMutation = useMutation({
-    mutationFn: (data: InsertAgendaPoint) => apiRequest("/api/agenda-points", "POST", data),
+    mutationFn: async (data: InsertAgendaPoint) => {
+      const response = await apiRequest("/api/agenda-points", "POST", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       setCreatePointForAgenda(null);

@@ -28,7 +28,10 @@ export default function SessionsPage() {
 
   // Create session mutation
   const createSessionMutation = useMutation({
-    mutationFn: (data: InsertSession) => apiRequest("/api/sessions", "POST", data),
+    mutationFn: async (data: InsertSession) => {
+      const response = await apiRequest("/api/sessions", "POST", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
       setIsCreateDialogOpen(false);
@@ -50,8 +53,10 @@ export default function SessionsPage() {
 
   // Update session mutation
   const updateSessionMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Session> }) => 
-      apiRequest(`/api/sessions/${id}`, "PATCH", data),
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Session> }) => {
+      const response = await apiRequest(`/api/sessions/${id}`, "PATCH", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
       setEditingSession(null);
@@ -71,7 +76,10 @@ export default function SessionsPage() {
 
   // Delete session mutation
   const deleteSessionMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/sessions/${id}`, "DELETE"),
+    mutationFn: async (id: number) => {
+      const response = await apiRequest(`/api/sessions/${id}`, "DELETE");
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
       toast({
@@ -210,7 +218,6 @@ export default function SessionsPage() {
                       <FormControl>
                         <Input 
                           type="datetime-local" 
-                          {...field}
                           value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
                           onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
                         />
@@ -379,7 +386,6 @@ export default function SessionsPage() {
                     <FormControl>
                       <Input 
                         type="datetime-local" 
-                        {...field}
                         value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
                         onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
                       />

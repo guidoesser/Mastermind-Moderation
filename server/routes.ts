@@ -318,7 +318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const agendaPointData = insertAgendaPointSchema.parse(req.body);
       const agendaPoint = await storage.createAgendaPoint(agendaPointData);
       res.json(agendaPoint);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Agenda point creation error:", error);
       res.status(400).json({ error: "Invalid agenda point data", details: error.message });
     }

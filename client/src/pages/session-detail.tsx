@@ -68,6 +68,13 @@ export default function SessionDetailPage() {
     }
   });
 
+  // Auto-create agenda if none exists
+  useEffect(() => {
+    if (agendas && agendas.length === 0 && sessionId && !createDefaultAgendaMutation.isPending) {
+      createDefaultAgendaMutation.mutate(sessionId);
+    }
+  }, [agendas, sessionId, createDefaultAgendaMutation]);
+
   // Fetch agenda points for this session
   const { data: allAgendaPoints } = useQuery<AgendaPoint[]>({
     queryKey: ["/api/sessions", sessionId, "agenda-points"],

@@ -8,6 +8,19 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Recording } from "@shared/schema";
 
+function formatDate(date: Date | string | null | undefined): string {
+  if (!date) return "N/A";
+  const d = date instanceof Date ? date : new Date(date);
+  return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+}
+
+function formatDuration(seconds: number | null): string {
+  if (!seconds) return "N/A";
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
 interface RecordingPlaybackProps {
   meetingId: number;
 }
@@ -27,7 +40,8 @@ export default function RecordingPlayback({ meetingId }: RecordingPlaybackProps)
 
   const deleteMutation = useMutation({
     mutationFn: async (recordingId: number) => {
-      return await apiRequest(`/api/recordings/${recordingId}`, "DELETE");
+      const response = await apiRequest(`/api/recordings/${recordingId}`, "DELETE");
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recordings", meetingId] });
@@ -179,7 +193,7 @@ export default function RecordingPlayback({ meetingId }: RecordingPlaybackProps)
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {formatDate(recording.startedAt)}
+                        {formatDate(recording.startedAt as any)}
                       </div>
                       
                       {recording.duration && (

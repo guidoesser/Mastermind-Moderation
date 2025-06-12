@@ -144,20 +144,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Session routes
   app.post("/api/sessions", async (req, res) => {
     try {
-      console.log("Session creation request body:", req.body);
-      
       // Convert string dates to Date objects before validation
       const processedBody = {
         ...req.body,
         scheduledAt: req.body.scheduledAt ? new Date(req.body.scheduledAt) : null
       };
       
-      console.log("Processed body:", processedBody);
-      console.log("scheduledAt type:", typeof processedBody.scheduledAt);
-      console.log("scheduledAt value:", processedBody.scheduledAt);
-      
       const sessionData = insertSessionSchema.parse(processedBody);
-      console.log("Parsed session data:", sessionData);
       const session = await storage.createSession(sessionData);
       res.json(session);
     } catch (error) {

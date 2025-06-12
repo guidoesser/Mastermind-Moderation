@@ -39,6 +39,10 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+});
+
 export const insertMeetingSchema = createInsertSchema(meetings).omit({
   id: true,
   createdAt: true,
@@ -54,10 +58,12 @@ export const insertFeedbackSchema = createInsertSchema(feedback).omit({
   createdAt: true,
 });
 
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type InsertParticipant = z.infer<typeof insertParticipantSchema>;
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
 
+export type User = typeof users.$inferSelect;
 export type Meeting = typeof meetings.$inferSelect;
 export type Participant = typeof participants.$inferSelect;
 export type Feedback = typeof feedback.$inferSelect;

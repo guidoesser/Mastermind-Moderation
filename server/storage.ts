@@ -1,6 +1,13 @@
-import { meetings, participants, feedback, type Meeting, type Participant, type Feedback, type InsertMeeting, type InsertParticipant, type InsertFeedback } from "@shared/schema";
+import { users, meetings, participants, feedback, type User, type Meeting, type Participant, type Feedback, type InsertUser, type InsertMeeting, type InsertParticipant, type InsertFeedback } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
+  // User operations
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(insertUser: InsertUser): Promise<User>;
+  
   // Meeting operations
   createMeeting(meeting: InsertMeeting): Promise<Meeting>;
   getMeeting(id: number): Promise<Meeting | undefined>;

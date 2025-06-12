@@ -69,7 +69,16 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       setIsCreateAgendaOpen(false);
+      agendaForm.reset();
       toast({ title: "Agenda Created", description: "New agenda has been created successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to create agenda:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to create agenda. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -78,7 +87,16 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       setCreatePointForAgenda(null);
+      agendaPointForm.reset();
       toast({ title: "Agenda Point Created", description: "New agenda point has been created successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to create agenda point:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to create agenda point. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -87,7 +105,16 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       setCreateActionForPoint(null);
+      actionForm.reset();
       toast({ title: "Action Created", description: "New action has been created successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to create action:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to create action. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -99,6 +126,14 @@ export default function SessionDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       setEditingAgenda(null);
       toast({ title: "Agenda Updated", description: "Agenda has been updated successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to update agenda:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to update agenda. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -109,6 +144,14 @@ export default function SessionDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       setEditingPoint(null);
       toast({ title: "Agenda Point Updated", description: "Agenda point has been updated successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to update agenda point:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to update agenda point. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -119,6 +162,14 @@ export default function SessionDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       setEditingAction(null);
       toast({ title: "Action Updated", description: "Action has been updated successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to update action:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to update action. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -128,6 +179,14 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       toast({ title: "Agenda Deleted", description: "Agenda has been deleted successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to delete agenda:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to delete agenda. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -136,6 +195,14 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       toast({ title: "Agenda Point Deleted", description: "Agenda point has been deleted successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to delete agenda point:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to delete agenda point. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -144,6 +211,14 @@ export default function SessionDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       toast({ title: "Action Deleted", description: "Action has been deleted successfully" });
+    },
+    onError: (error) => {
+      console.error("Failed to delete action:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to delete action. Please try again.", 
+        variant: "destructive" 
+      });
     }
   });
 
@@ -749,6 +824,9 @@ export default function SessionDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Agenda</DialogTitle>
+            <DialogDescription>
+              Update the agenda title and description.
+            </DialogDescription>
           </DialogHeader>
           <Form {...agendaForm}>
             <form onSubmit={agendaForm.handleSubmit((data) => {
@@ -806,6 +884,9 @@ export default function SessionDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Agenda Point</DialogTitle>
+            <DialogDescription>
+              Update the agenda point title and description.
+            </DialogDescription>
           </DialogHeader>
           <Form {...agendaPointForm}>
             <form onSubmit={agendaPointForm.handleSubmit((data) => {
@@ -863,6 +944,9 @@ export default function SessionDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Action</DialogTitle>
+            <DialogDescription>
+              Update the action details, priority, status, and assignments.
+            </DialogDescription>
           </DialogHeader>
           <Form {...actionForm}>
             <form onSubmit={actionForm.handleSubmit((data) => {

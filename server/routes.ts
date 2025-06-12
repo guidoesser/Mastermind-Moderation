@@ -153,9 +153,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionData = insertSessionSchema.parse(processedBody);
       const session = await storage.createSession(sessionData);
       res.json(session);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Session creation error:", error);
-      res.status(400).json({ error: "Invalid session data", details: error instanceof Error ? error.message : String(error) });
+      
+      // Handle different types of errors
+      if (error?.name === 'ZodError') {
+        return res.status(400).json({ error: "Invalid session data", details: error.issues });
+      }
+      
+      if (error?.code === 'ECONNREFUSED' || error?.code === 'ENOTFOUND') {
+        return res.status(503).json({ error: "Database connection failed", details: "Please try again later" });
+      }
+      
+      res.status(500).json({ error: "Internal server error", details: error instanceof Error ? error.message : String(error) });
     }
   });
 

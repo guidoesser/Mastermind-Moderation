@@ -163,11 +163,16 @@ export class DatabaseStorage implements IStorage {
 
   // Session operations
   async createSession(insertSession: InsertSession): Promise<Session> {
-    const [session] = await db
-      .insert(sessions)
-      .values(insertSession)
-      .returning();
-    return session;
+    try {
+      const [session] = await db
+        .insert(sessions)
+        .values(insertSession)
+        .returning();
+      return session;
+    } catch (error) {
+      console.error("Database error creating session:", error);
+      throw new Error("Failed to create session in database");
+    }
   }
 
   async getSession(id: number): Promise<Session | undefined> {

@@ -117,6 +117,11 @@ export default function SessionsPage() {
   });
 
   const onSubmit = (data: InsertSession) => {
+    // Prevent double submission
+    if (createSessionMutation.isPending || updateSessionMutation.isPending) {
+      return;
+    }
+    
     if (editingSession) {
       updateSessionMutation.mutate({ id: editingSession.id, data });
     } else {

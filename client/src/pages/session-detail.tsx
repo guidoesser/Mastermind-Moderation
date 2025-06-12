@@ -234,7 +234,7 @@ export default function SessionDetailPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "actions"] });
       toast({ title: "Action Deleted", description: "Action has been deleted successfully" });
     },
     onError: (error) => {

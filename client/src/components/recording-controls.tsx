@@ -28,7 +28,7 @@ export default function RecordingControls({
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { mediaSource: "screen" },
+        video: true,
         audio: true,
       });
 
@@ -123,13 +123,7 @@ export default function RecordingControls({
         endedAt: endTime.toISOString(),
       };
 
-      await apiRequest("/api/recordings", {
-        method: "POST",
-        body: JSON.stringify(recordingData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await apiRequest("/api/recordings", "POST", recordingData);
 
       toast({
         title: "Recording Saved",

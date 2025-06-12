@@ -47,6 +47,7 @@ export interface IStorage {
   // Agenda Point operations
   createAgendaPoint(agendaPoint: InsertAgendaPoint): Promise<AgendaPoint>;
   getAgendaPoint(id: number): Promise<AgendaPoint | undefined>;
+  getAllAgendaPoints(): Promise<AgendaPoint[]>;
   getAgendaPointsByAgenda(agendaId: number): Promise<AgendaPoint[]>;
   updateAgendaPoint(id: number, updates: Partial<AgendaPoint>): Promise<AgendaPoint | undefined>;
   deleteAgendaPoint(id: number): Promise<boolean>;
@@ -54,6 +55,7 @@ export interface IStorage {
   // Action operations
   createAction(action: InsertAction): Promise<Action>;
   getAction(id: number): Promise<Action | undefined>;
+  getAllActions(): Promise<Action[]>;
   getActionsByAgendaPoint(agendaPointId: number): Promise<Action[]>;
   updateAction(id: number, updates: Partial<Action>): Promise<Action | undefined>;
   deleteAction(id: number): Promise<boolean>;
@@ -257,6 +259,10 @@ export class DatabaseStorage implements IStorage {
     return agendaPoint || undefined;
   }
 
+  async getAllAgendaPoints(): Promise<AgendaPoint[]> {
+    return await db.select().from(agendaPoints);
+  }
+
   async getAgendaPointsByAgenda(agendaId: number): Promise<AgendaPoint[]> {
     return await db.select().from(agendaPoints).where(eq(agendaPoints.agendaId, agendaId));
   }
@@ -291,6 +297,10 @@ export class DatabaseStorage implements IStorage {
   async getAction(id: number): Promise<Action | undefined> {
     const [action] = await db.select().from(actions).where(eq(actions.id, id));
     return action || undefined;
+  }
+
+  async getAllActions(): Promise<Action[]> {
+    return await db.select().from(actions);
   }
 
   async getActionsByAgendaPoint(agendaPointId: number): Promise<Action[]> {

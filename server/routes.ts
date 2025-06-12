@@ -294,6 +294,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Agenda Point routes
+  app.get("/api/agenda-points", async (req, res) => {
+    try {
+      const agendaPoints = await storage.getAllAgendaPoints();
+      res.json(agendaPoints);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch agenda points" });
+    }
+  });
+
   app.post("/api/agenda-points", async (req, res) => {
     try {
       const agendaPointData = insertAgendaPointSchema.parse(req.body);
@@ -371,6 +380,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Action routes
+  app.get("/api/actions", async (req, res) => {
+    try {
+      const actions = await storage.getAllActions();
+      res.json(actions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch actions" });
+    }
+  });
+
   app.post("/api/actions", async (req, res) => {
     try {
       const actionData = insertActionSchema.parse(req.body);
@@ -378,6 +396,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(action);
     } catch (error) {
       res.status(400).json({ error: "Invalid action data" });
+    }
+  });
+
+  app.get("/api/sessions/:sessionId/agenda-points", async (req, res) => {
+    try {
+      const sessionId = parseInt(req.params.sessionId);
+      const agendas = await storage.getAgendasBySession(sessionId);
+      const agendaPoints = [];
+      
+      for (const agenda of agendas) {
+        const points = await storage.getAgendaPointsByAgenda(agenda.id);
+        agendaPoints.push(...points);
+      }
+      
+      res.json(agendaPoints);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid session ID" });
     }
   });
 

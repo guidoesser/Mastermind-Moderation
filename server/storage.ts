@@ -39,6 +39,7 @@ export interface IStorage {
   // Agenda operations
   createAgenda(agenda: InsertAgenda): Promise<Agenda>;
   getAgenda(id: number): Promise<Agenda | undefined>;
+  getAllAgendas(): Promise<Agenda[]>;
   getAgendasBySession(sessionId: number): Promise<Agenda[]>;
   updateAgenda(id: number, updates: Partial<Agenda>): Promise<Agenda | undefined>;
   deleteAgenda(id: number): Promise<boolean>;
@@ -214,6 +215,10 @@ export class DatabaseStorage implements IStorage {
   async getAgenda(id: number): Promise<Agenda | undefined> {
     const [agenda] = await db.select().from(agendas).where(eq(agendas.id, id));
     return agenda || undefined;
+  }
+
+  async getAllAgendas(): Promise<Agenda[]> {
+    return await db.select().from(agendas);
   }
 
   async getAgendasBySession(sessionId: number): Promise<Agenda[]> {

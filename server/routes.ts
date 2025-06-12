@@ -235,6 +235,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/agendas", async (req, res) => {
+    try {
+      const agendas = await storage.getAllAgendas();
+      res.json(agendas);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch agendas" });
+    }
+  });
+
   app.get("/api/sessions/:sessionId/agendas", async (req, res) => {
     try {
       const sessionId = parseInt(req.params.sessionId);

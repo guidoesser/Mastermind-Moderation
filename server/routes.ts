@@ -3,11 +3,13 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMeetingSchema, insertParticipantSchema, insertFeedbackSchema, insertSessionSchema, insertAgendaSchema, insertAgendaPointSchema, insertActionSchema, insertRecordingSchema } from "@shared/schema";
 import { setupWebSocket } from "./websocket";
+import { setupWebRTCSignaling } from "./webrtc-signaling";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
   setupWebSocket(httpServer);
+  // WebRTC signaling will be integrated into the existing WebSocket
 
   // Meeting routes
   app.post("/api/meetings", async (req, res) => {

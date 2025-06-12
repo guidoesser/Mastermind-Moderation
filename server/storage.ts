@@ -1,6 +1,6 @@
 import { users, meetings, participants, feedback, type User, type Meeting, type Participant, type Feedback, type InsertUser, type InsertMeeting, type InsertParticipant, type InsertFeedback } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -26,130 +26,97 @@ export interface IStorage {
   getFeedbackByMeeting(meetingId: number): Promise<Feedback[]>;
 }
 
-export class MemStorage implements IStorage {
-  private meetings: Map<number, Meeting>;
-  private participants: Map<number, Participant>;
-  private feedback: Map<number, Feedback>;
-  private currentMeetingId: number;
-  private currentParticipantId: number;
-  private currentFeedbackId: number;
-
-  constructor() {
-    this.meetings = new Map();
-    this.participants = new Map();
-    this.feedback = new Map();
-    this.currentMeetingId = 1;
-    this.currentParticipantId = 1;
-    this.currentFeedbackId = 1;
-    
-    // Clear any existing data on restart
-    this.clearAll();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
-  private clearAll() {
-    this.meetings.clear();
-    this.participants.clear();
-    this.feedback.clear();
-    this.currentMeetingId = 1;
-    this.currentParticipantId = 1;
-    this.currentFeedbackId = 1;
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
   }
 
   async createMeeting(insertMeeting: InsertMeeting): Promise<Meeting> {
-    const id = this.currentMeetingId++;
-    const meeting: Meeting = {
-      id,
-      title: insertMeeting.title,
-      roomId: insertMeeting.roomId,
-      currentPhase: insertMeeting.currentPhase || "check-in",
-      phaseStartTime: new Date(),
-      isActive: insertMeeting.isActive ?? true,
-      isRecording: insertMeeting.isRecording ?? false,
-      createdAt: new Date(),
-    };
-    this.meetings.set(id, meeting);
+    const [meeting] = await db
+      .insert(meetings)
+      .values(insertMeeting)
+      .returning();
     return meeting;
   }
 
   async getMeeting(id: number): Promise<Meeting | undefined> {
-    return this.meetings.get(id);
+    const [meeting] = await db.select().from(meetings).where(eq(meetings.id, id));
+    return meeting || undefined;
   }
 
   async getMeetingByRoomId(roomId: string): Promise<Meeting | undefined> {
-    return Array.from(this.meetings.values()).find(
-      (meeting) => meeting.roomId === roomId
-    );
+    const [meeting] = await db.select().from(meetings).where(eq(meetings.roomId, roomId));
+    return meeting || undefined;
   }
 
   async updateMeeting(id: number, updates: Partial<Meeting>): Promise<Meeting | undefined> {
-    const meeting = this.meetings.get(id);
-    if (!meeting) return undefined;
-    
-    const updatedMeeting = { ...meeting, ...updates };
-    this.meetings.set(id, updatedMeeting);
-    return updatedMeeting;
+    const [meeting] = await db
+      .update(meetings)
+      .set(updates)
+      .where(eq(meetings.id, id))
+      .returning();
+    return meeting || undefined;
   }
 
   async addParticipant(insertParticipant: InsertParticipant): Promise<Participant> {
-    const id = this.currentParticipantId++;
-    const participant: Participant = {
-      id,
-      name: insertParticipant.name,
-      meetingId: insertParticipant.meetingId,
-      avatar: insertParticipant.avatar || null,
-      status: insertParticipant.status || "waiting",
-      joinedAt: new Date(),
-    };
-    this.participants.set(id, participant);
+    const [participant] = await db
+      .insert(participants)
+      .values(insertParticipant)
+      .returning();
     return participant;
   }
 
   async getParticipantsByMeeting(meetingId: number): Promise<Participant[]> {
-    return Array.from(this.participants.values()).filter(
-      (participant) => participant.meetingId === meetingId
-    );
+    return await db.select().from(participants).where(eq(participants.meetingId, meetingId));
   }
 
   async getParticipantByNameAndMeeting(name: string, meetingId: number): Promise<Participant | undefined> {
-    return Array.from(this.participants.values()).find(
-      (participant) => participant.name === name && participant.meetingId === meetingId
-    );
+    const [participant] = await db
+      .select()
+      .from(participants)
+      .where(and(eq(participants.name, name), eq(participants.meetingId, meetingId)));
+    return participant || undefined;
   }
 
   async updateParticipant(id: number, updates: Partial<Participant>): Promise<Participant | undefined> {
-    const participant = this.participants.get(id);
-    if (!participant) return undefined;
-    
-    const updatedParticipant = { ...participant, ...updates };
-    this.participants.set(id, updatedParticipant);
-    return updatedParticipant;
+    const [participant] = await db
+      .update(participants)
+      .set(updates)
+      .where(eq(participants.id, id))
+      .returning();
+    return participant || undefined;
   }
 
   async removeParticipant(id: number): Promise<boolean> {
-    return this.participants.delete(id);
+    const result = await db.delete(participants).where(eq(participants.id, id));
+    return result.length > 0;
   }
 
   async addFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
-    const id = this.currentFeedbackId++;
-    const feedbackItem: Feedback = {
-      id,
-      meetingId: insertFeedback.meetingId,
-      participantId: insertFeedback.participantId,
-      phase: insertFeedback.phase,
-      whatWentWell: insertFeedback.whatWentWell || null,
-      challenges: insertFeedback.challenges || null,
-      actionItems: insertFeedback.actionItems || null,
-      createdAt: new Date(),
-    };
-    this.feedback.set(id, feedbackItem);
+    const [feedbackItem] = await db
+      .insert(feedback)
+      .values(insertFeedback)
+      .returning();
     return feedbackItem;
   }
 
   async getFeedbackByMeeting(meetingId: number): Promise<Feedback[]> {
-    return Array.from(this.feedback.values()).filter(
-      (feedback) => feedback.meetingId === meetingId
-    );
+    return await db.select().from(feedback).where(eq(feedback.meetingId, meetingId));
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

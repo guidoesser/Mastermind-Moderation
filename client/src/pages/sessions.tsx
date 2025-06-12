@@ -16,6 +16,16 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { insertSessionSchema, type Session, type InsertSession } from "@shared/schema";
 
+// Utility function to handle datetime conversion for local input
+function formatDateForInput(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  const d = new Date(date);
+  // Convert to local timezone for display
+  const offset = d.getTimezoneOffset();
+  const localDate = new Date(d.getTime() - (offset * 60 * 1000));
+  return localDate.toISOString().slice(0, 16);
+}
+
 export default function SessionsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingSession, setEditingSession] = useState<Session | null>(null);
@@ -218,10 +228,13 @@ export default function SessionsPage() {
                       <FormControl>
                         <Input 
                           type="datetime-local" 
-                          value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
+                          value={formatDateForInput(field.value || null)}
                           onChange={(e) => {
-                            const dateValue = e.target.value ? new Date(e.target.value) : null;
-                            field.onChange(dateValue);
+                            if (e.target.value) {
+                              field.onChange(new Date(e.target.value));
+                            } else {
+                              field.onChange(null);
+                            }
                           }}
                         />
                       </FormControl>
@@ -389,10 +402,13 @@ export default function SessionsPage() {
                     <FormControl>
                       <Input 
                         type="datetime-local" 
-                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
+                        value={formatDateForInput(field.value)}
                         onChange={(e) => {
-                          const dateValue = e.target.value ? new Date(e.target.value) : null;
-                          field.onChange(dateValue);
+                          if (e.target.value) {
+                            field.onChange(new Date(e.target.value));
+                          } else {
+                            field.onChange(null);
+                          }
                         }}
                       />
                     </FormControl>

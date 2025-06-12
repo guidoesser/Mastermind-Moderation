@@ -251,7 +251,7 @@ export default function SessionsPage() {
                 <div className="flex gap-2 pt-4">
                   <Button 
                     type="submit" 
-                    disabled={createSessionMutation.isPending}
+                    disabled={createSessionMutation.isPending || updateSessionMutation.isPending}
                     className="flex-1"
                   >
                     {createSessionMutation.isPending ? "Creating..." : "Create Session"}
@@ -425,7 +425,7 @@ export default function SessionsPage() {
               <div className="flex gap-2 pt-4">
                 <Button 
                   type="submit" 
-                  disabled={updateSessionMutation.isPending}
+                  disabled={updateSessionMutation.isPending || createSessionMutation.isPending}
                   className="flex-1"
                 >
                   {updateSessionMutation.isPending ? "Updating..." : "Update Session"}

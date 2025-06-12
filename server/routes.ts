@@ -195,11 +195,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       
-      // Convert string dates to Date objects before update
-      const processedBody = {
-        ...req.body,
-        scheduledAt: req.body.scheduledAt ? new Date(req.body.scheduledAt) : req.body.scheduledAt
-      };
+      // Process the update data to handle date conversion
+      const processedBody: any = {};
+      
+      // Only include fields that are present in the request body
+      if (req.body.title !== undefined) processedBody.title = req.body.title;
+      if (req.body.description !== undefined) processedBody.description = req.body.description;
+      if (req.body.duration !== undefined) processedBody.duration = req.body.duration;
+      if (req.body.status !== undefined) processedBody.status = req.body.status;
+      
+      // Handle scheduledAt separately with proper date conversion
+      if (req.body.scheduledAt !== undefined) {
+        processedBody.scheduledAt = req.body.scheduledAt ? new Date(req.body.scheduledAt) : null;
+      }
       
       const session = await storage.updateSession(id, processedBody);
       if (!session) {
@@ -207,6 +215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(session);
     } catch (error) {
+      console.error("Session update error:", error);
       res.status(400).json({ error: "Invalid update data" });
     }
   });

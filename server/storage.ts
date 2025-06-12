@@ -182,8 +182,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteSession(id: number): Promise<boolean> {
-    const result = await db.delete(sessions).where(eq(sessions.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(sessions).where(eq(sessions.id, id));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // Agenda operations
@@ -214,8 +218,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteAgenda(id: number): Promise<boolean> {
-    const result = await db.delete(agendas).where(eq(agendas.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(agendas).where(eq(agendas.id, id));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // Agenda Point operations
@@ -246,8 +254,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteAgendaPoint(id: number): Promise<boolean> {
-    const result = await db.delete(agendaPoints).where(eq(agendaPoints.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(agendaPoints).where(eq(agendaPoints.id, id));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // Action operations
@@ -278,8 +290,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteAction(id: number): Promise<boolean> {
-    const result = await db.delete(actions).where(eq(actions.id, id));
-    return result.count > 0;
+    try {
+      await db.delete(actions).where(eq(actions.id, id));
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 

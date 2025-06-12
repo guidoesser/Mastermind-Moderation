@@ -314,11 +314,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/agenda-points", async (req, res) => {
     try {
+      console.log("Agenda point creation request body:", req.body);
       const agendaPointData = insertAgendaPointSchema.parse(req.body);
       const agendaPoint = await storage.createAgendaPoint(agendaPointData);
       res.json(agendaPoint);
     } catch (error) {
-      res.status(400).json({ error: "Invalid agenda point data" });
+      console.error("Agenda point creation error:", error);
+      res.status(400).json({ error: "Invalid agenda point data", details: error.message });
     }
   });
 

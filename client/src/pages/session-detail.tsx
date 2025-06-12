@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { 
   ArrowLeft, Plus, Edit, Trash2, ChevronDown, ChevronRight, 
@@ -49,6 +49,23 @@ export default function SessionDetailPage() {
   const { data: agendas, isLoading } = useQuery<Agenda[]>({
     queryKey: ["/api/sessions", sessionId, "agendas"],
     enabled: !!sessionId
+  });
+
+  // Auto-create default agenda if none exists
+  const createDefaultAgendaMutation = useMutation({
+    mutationFn: async (sessionId: number) => {
+      const response = await apiRequest("/api/agendas", "POST", {
+        sessionId,
+        title: "Main Agenda",
+        description: "Primary agenda for this session",
+        orderIndex: 1,
+        estimatedDuration: 60
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
+    }
   });
 
   // Fetch agenda points for this session

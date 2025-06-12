@@ -280,7 +280,7 @@ export default function RecordingPlayback({ meetingId }: RecordingPlaybackProps)
                 <div>
                   <h3 className="font-medium">{selectedRecording.fileName}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Recorded on {formatDate(selectedRecording.startedAt)}
+                    Recorded on {formatDate(selectedRecording.startedAt as any)}
                   </p>
                 </div>
                 

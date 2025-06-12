@@ -402,7 +402,7 @@ export default function SessionsPage() {
                     <FormControl>
                       <Input 
                         type="datetime-local" 
-                        value={formatDateForInput(field.value)}
+                        value={formatDateForInput(field.value || null)}
                         onChange={(e) => {
                           if (e.target.value) {
                             field.onChange(new Date(e.target.value));

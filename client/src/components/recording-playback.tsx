@@ -17,11 +17,11 @@ export default function RecordingPlayback({ meetingId }: RecordingPlaybackProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: recordings = [], isLoading } = useQuery({
+  const { data: recordings = [], isLoading, refetch } = useQuery({
     queryKey: ["recordings", meetingId],
     queryFn: async (): Promise<Recording[]> => {
-      const response = await apiRequest(`/api/meetings/${meetingId}/recordings`);
-      return response as Recording[];
+      const response = await apiRequest(`/api/meetings/${meetingId}/recordings`, "GET");
+      return response.json();
     },
   });
 

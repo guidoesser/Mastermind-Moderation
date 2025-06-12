@@ -107,7 +107,10 @@ export default function SessionDetailPage() {
   });
 
   const createActionMutation = useMutation({
-    mutationFn: (data: InsertAction) => apiRequest("/api/actions", "POST", data),
+    mutationFn: async (data: InsertAction) => {
+      const response = await apiRequest("/api/actions", "POST", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       setCreateActionForPoint(null);
@@ -126,8 +129,10 @@ export default function SessionDetailPage() {
 
   // Update mutations
   const updateAgendaMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Agenda> }) => 
-      apiRequest(`/api/agendas/${id}`, "PATCH", data),
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Agenda> }) => {
+      const response = await apiRequest(`/api/agendas/${id}`, "PATCH", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       setEditingAgenda(null);
@@ -144,8 +149,10 @@ export default function SessionDetailPage() {
   });
 
   const updateAgendaPointMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<AgendaPoint> }) => 
-      apiRequest(`/api/agenda-points/${id}`, "PATCH", data),
+    mutationFn: async ({ id, data }: { id: number; data: Partial<AgendaPoint> }) => {
+      const response = await apiRequest(`/api/agenda-points/${id}`, "PATCH", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       setEditingPoint(null);
@@ -162,8 +169,10 @@ export default function SessionDetailPage() {
   });
 
   const updateActionMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Action> }) => 
-      apiRequest(`/api/actions/${id}`, "PATCH", data),
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Action> }) => {
+      const response = await apiRequest(`/api/actions/${id}`, "PATCH", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       setEditingAction(null);
@@ -181,7 +190,10 @@ export default function SessionDetailPage() {
 
   // Delete mutations
   const deleteAgendaMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/agendas/${id}`, "DELETE"),
+    mutationFn: async (id: number) => {
+      const response = await apiRequest(`/api/agendas/${id}`, "DELETE");
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId, "agendas"] });
       toast({ title: "Agenda Deleted", description: "Agenda has been deleted successfully" });
@@ -197,7 +209,10 @@ export default function SessionDetailPage() {
   });
 
   const deleteAgendaPointMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/agenda-points/${id}`, "DELETE"),
+    mutationFn: async (id: number) => {
+      const response = await apiRequest(`/api/agenda-points/${id}`, "DELETE");
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/agenda-points"] });
       toast({ title: "Agenda Point Deleted", description: "Agenda point has been deleted successfully" });
@@ -213,7 +228,10 @@ export default function SessionDetailPage() {
   });
 
   const deleteActionMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/actions/${id}`, "DELETE"),
+    mutationFn: async (id: number) => {
+      const response = await apiRequest(`/api/actions/${id}`, "DELETE");
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/actions"] });
       toast({ title: "Action Deleted", description: "Action has been deleted successfully" });

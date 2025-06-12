@@ -84,6 +84,20 @@ export const actions = pgTable("actions", {
   completedAt: timestamp("completed_at"),
 });
 
+export const recordings = pgTable("recordings", {
+  id: serial("id").primaryKey(),
+  meetingId: integer("meeting_id").notNull().references(() => meetings.id),
+  fileName: text("file_name").notNull(),
+  filePath: text("file_path").notNull(),
+  fileSize: integer("file_size"), // in bytes
+  duration: integer("duration"), // in seconds
+  format: text("format").notNull().default("webm"), // webm, mp4, etc.
+  status: text("status").notNull().default("processing"), // processing, ready, failed
+  startedAt: timestamp("started_at").notNull(),
+  endedAt: timestamp("ended_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
@@ -124,6 +138,11 @@ export const insertActionSchema = createInsertSchema(actions).omit({
   completedAt: true,
 });
 
+export const insertRecordingSchema = createInsertSchema(recordings).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 export type InsertParticipant = z.infer<typeof insertParticipantSchema>;
@@ -132,6 +151,7 @@ export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type InsertAgenda = z.infer<typeof insertAgendaSchema>;
 export type InsertAgendaPoint = z.infer<typeof insertAgendaPointSchema>;
 export type InsertAction = z.infer<typeof insertActionSchema>;
+export type InsertRecording = z.infer<typeof insertRecordingSchema>;
 
 export type User = typeof users.$inferSelect;
 export type Meeting = typeof meetings.$inferSelect;
@@ -141,6 +161,7 @@ export type Session = typeof sessions.$inferSelect;
 export type Agenda = typeof agendas.$inferSelect;
 export type AgendaPoint = typeof agendaPoints.$inferSelect;
 export type Action = typeof actions.$inferSelect;
+export type Recording = typeof recordings.$inferSelect;
 
 export const MEETING_PHASES = ['check-in', 'hot-seat', 'feedback', 'action-steps'] as const;
 export const PARTICIPANT_STATUS = ['waiting', 'speaking', 'next', 'completed'] as const;

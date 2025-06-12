@@ -1,7 +1,7 @@
 import { 
-  users, meetings, participants, feedback, sessions, agendas, agendaPoints, actions,
-  type User, type Meeting, type Participant, type Feedback, type Session, type Agenda, type AgendaPoint, type Action,
-  type InsertUser, type InsertMeeting, type InsertParticipant, type InsertFeedback, type InsertSession, type InsertAgenda, type InsertAgendaPoint, type InsertAction 
+  users, meetings, participants, feedback, sessions, agendas, agendaPoints, actions, recordings,
+  type User, type Meeting, type Participant, type Feedback, type Session, type Agenda, type AgendaPoint, type Action, type Recording,
+  type InsertUser, type InsertMeeting, type InsertParticipant, type InsertFeedback, type InsertSession, type InsertAgenda, type InsertAgendaPoint, type InsertAction, type InsertRecording 
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -56,6 +56,13 @@ export interface IStorage {
   getActionsByAgendaPoint(agendaPointId: number): Promise<Action[]>;
   updateAction(id: number, updates: Partial<Action>): Promise<Action | undefined>;
   deleteAction(id: number): Promise<boolean>;
+  
+  // Recording operations
+  createRecording(recording: InsertRecording): Promise<Recording>;
+  getRecording(id: number): Promise<Recording | undefined>;
+  getRecordingsByMeeting(meetingId: number): Promise<Recording[]>;
+  updateRecording(id: number, updates: Partial<Recording>): Promise<Recording | undefined>;
+  deleteRecording(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -292,6 +299,42 @@ export class DatabaseStorage implements IStorage {
   async deleteAction(id: number): Promise<boolean> {
     try {
       await db.delete(actions).where(eq(actions.id, id));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // Recording operations
+  async createRecording(insertRecording: InsertRecording): Promise<Recording> {
+    const [recording] = await db
+      .insert(recordings)
+      .values(insertRecording)
+      .returning();
+    return recording;
+  }
+
+  async getRecording(id: number): Promise<Recording | undefined> {
+    const [recording] = await db.select().from(recordings).where(eq(recordings.id, id));
+    return recording || undefined;
+  }
+
+  async getRecordingsByMeeting(meetingId: number): Promise<Recording[]> {
+    return await db.select().from(recordings).where(eq(recordings.meetingId, meetingId));
+  }
+
+  async updateRecording(id: number, updates: Partial<Recording>): Promise<Recording | undefined> {
+    const [recording] = await db
+      .update(recordings)
+      .set(updates)
+      .where(eq(recordings.id, id))
+      .returning();
+    return recording || undefined;
+  }
+
+  async deleteRecording(id: number): Promise<boolean> {
+    try {
+      await db.delete(recordings).where(eq(recordings.id, id));
       return true;
     } catch {
       return false;

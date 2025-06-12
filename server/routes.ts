@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertMeetingSchema, insertParticipantSchema, insertFeedbackSchema, insertSessionSchema, insertAgendaSchema, insertAgendaPointSchema, insertActionSchema } from "@shared/schema";
+import { insertMeetingSchema, insertParticipantSchema, insertFeedbackSchema, insertSessionSchema, insertAgendaSchema, insertAgendaPointSchema, insertActionSchema, insertRecordingSchema } from "@shared/schema";
 import { setupWebSocket } from "./websocket";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -375,6 +375,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(400).json({ error: "Invalid action ID" });
+    }
+  });
+
+  // Recording routes
+  app.post("/api/recordings", async (req, res) => {
+    try {
+      const recordingData = insertRecordingSchema.parse(req.body);
+      const recording = await storage.createRecording(recordingData);
+      res.json(recording);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid recording data" });
+    }
+  });
+
+  app.get("/api/meetings/:meetingId/recordings", async (req, res) => {
+    try {
+      const meetingId = parseInt(req.params.meetingId);
+      const recordings = await storage.getRecordingsByMeeting(meetingId);
+      res.json(recordings);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid meeting ID" });
+    }
+  });
+
+  app.get("/api/recordings/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const recording = await storage.getRecording(id);
+      if (!recording) {
+        return res.status(404).json({ error: "Recording not found" });
+      }
+      res.json(recording);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid recording ID" });
+    }
+  });
+
+  app.patch("/api/recordings/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const recording = await storage.updateRecording(id, req.body);
+      if (!recording) {
+        return res.status(404).json({ error: "Recording not found" });
+      }
+      res.json(recording);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid update data" });
+    }
+  });
+
+  app.delete("/api/recordings/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteRecording(id);
+      if (!success) {
+        return res.status(404).json({ error: "Recording not found" });
+      }
+      res.json({ success: true });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid recording ID" });
     }
   });
 

@@ -122,12 +122,12 @@ export default function VideoConference({ roomId }: VideoConferenceProps) {
   }, [localStream]);
 
   return (
-    <div className="w-full h-full bg-gray-900 rounded-lg overflow-hidden flex flex-col">
-      {/* Video Grid */}
-      <div className="flex-1 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
-          {/* Local Video */}
-          <Card className="relative overflow-hidden bg-black">
+    <div className="w-full h-full bg-gray-900 overflow-hidden flex flex-col">
+      {/* Main Video Area */}
+      <div className="flex-1 p-2 flex flex-col">
+        {/* Primary Video Display */}
+        <div className="flex-1 mb-2">
+          <Card className="w-full h-full relative overflow-hidden bg-black">
             <video
               ref={localVideoRef}
               autoPlay
@@ -138,65 +138,71 @@ export default function VideoConference({ roomId }: VideoConferenceProps) {
             {!isVideoEnabled && (
               <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
                 <div className="text-center text-white">
-                  <VideoOff className="w-12 h-12 mx-auto mb-2" />
-                  <p>Camera Off</p>
+                  <div className="w-24 h-24 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <User className="w-12 h-12" />
+                  </div>
+                  <p className="text-xl font-medium">Camera Off</p>
                 </div>
               </div>
             )}
-            <div className="absolute bottom-2 left-2 flex gap-1">
-              <Badge variant="secondary" className="bg-black/50 text-white">
-                You
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              <Badge variant="secondary" className="bg-black/70 text-white px-3 py-1">
+                <span className="font-medium">You</span>
               </Badge>
               {!isAudioEnabled && (
-                <Badge variant="destructive" className="bg-red-500/80">
-                  <MicOff className="w-3 h-3" />
+                <Badge variant="destructive" className="bg-red-500/90 px-2 py-1">
+                  <MicOff className="w-4 h-4 mr-1" />
+                  Muted
                 </Badge>
               )}
               {isScreenSharing && (
-                <Badge variant="default" className="bg-blue-500/80">
-                  <Monitor className="w-3 h-3" />
+                <Badge variant="default" className="bg-blue-500/90 px-2 py-1">
+                  <Monitor className="w-4 h-4 mr-1" />
+                  Sharing
                 </Badge>
               )}
             </div>
           </Card>
-
-          {/* Remote Participants */}
-          {participants.map((participant) => (
-            <Card key={participant.id} className="relative overflow-hidden bg-black">
-              {participant.videoEnabled ? (
-                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">
-                      {participant.name.charAt(0)}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <VideoOff className="w-12 h-12 mx-auto mb-2" />
-                    <p>{participant.name}</p>
-                  </div>
-                </div>
-              )}
-              <div className="absolute bottom-2 left-2 flex gap-1">
-                <Badge variant="secondary" className="bg-black/50 text-white">
-                  {participant.name.split(' ')[0]}
-                </Badge>
-                {!participant.audioEnabled && (
-                  <Badge variant="destructive" className="bg-red-500/80">
-                    <MicOff className="w-3 h-3" />
-                  </Badge>
-                )}
-                {participant.isScreenSharing && (
-                  <Badge variant="default" className="bg-blue-500/80">
-                    <Monitor className="w-3 h-3" />
-                  </Badge>
-                )}
-              </div>
-            </Card>
-          ))}
         </div>
+
+        {/* Participant Thumbnails */}
+        {participants.length > 0 && (
+          <div className="h-20 flex gap-2 overflow-x-auto">
+            {participants.map((participant) => (
+              <Card key={participant.id} className="w-28 h-full relative overflow-hidden bg-black flex-shrink-0">
+                {participant.videoEnabled ? (
+                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">
+                        {participant.name.charAt(0)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <User className="w-6 h-6 mx-auto mb-1" />
+                      <p className="text-xs truncate px-1">{participant.name.split(' ')[0]}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="absolute bottom-1 left-1 flex gap-1">
+                  <Badge variant="secondary" className="bg-black/70 text-white text-xs px-1">
+                    {participant.name.split(' ')[0]}
+                  </Badge>
+                </div>
+                <div className="absolute top-1 right-1 flex gap-1">
+                  {!participant.audioEnabled && (
+                    <MicOff className="w-3 h-3 text-red-400" />
+                  )}
+                  {participant.isScreenSharing && (
+                    <Monitor className="w-3 h-3 text-blue-400" />
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Controls */}

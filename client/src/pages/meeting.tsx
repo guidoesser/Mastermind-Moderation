@@ -173,16 +173,16 @@ export default function Meeting() {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row">
-        {/* Video Conference Area */}
-        <div className="flex-1 bg-gray-900 relative min-h-[400px] lg:min-h-0">
+      <div className="flex-1 flex">
+        {/* Video Conference Area - Full Screen */}
+        <div className="flex-1 bg-gray-900 relative">
           <VideoConference roomId={currentRoomId} />
         </div>
 
-        {/* Control Panel */}
-        <div className="w-full lg:w-96 bg-white border-l border-gray-200 flex flex-col">
+        {/* Collapsible Control Panel */}
+        <div className="w-80 bg-white border-l border-gray-200 flex flex-col max-h-full overflow-hidden">
           {/* Recording Controls */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-3 border-b border-gray-200 flex-shrink-0">
             <SimpleRecordingControls
               meetingId={currentMeeting?.id || 1}
               isRecording={isRecording}
@@ -191,25 +191,31 @@ export default function Meeting() {
           </div>
 
           {/* Agenda Progress */}
-          <AgendaProgress
-            currentPhase={currentMeeting?.currentPhase || "check-in"}
-            phaseTimer={phaseTimer}
-            onPhaseChange={updatePhase}
-          />
+          <div className="p-3 border-b border-gray-200 flex-shrink-0">
+            <AgendaProgress
+              currentPhase={currentMeeting?.currentPhase || "check-in"}
+              phaseTimer={phaseTimer}
+              onPhaseChange={updatePhase}
+            />
+          </div>
 
           {/* Participants Section */}
-          <ParticipantsList
-            participants={participants}
-            meetingId={currentMeeting?.id}
-            currentPhase={currentMeeting?.currentPhase || "check-in"}
-            onParticipantStatusChange={updateParticipantStatus}
-          />
+          <div className="p-3 border-b border-gray-200 flex-shrink-0">
+            <ParticipantsList
+              participants={participants}
+              meetingId={currentMeeting?.id}
+              currentPhase={currentMeeting?.currentPhase || "check-in"}
+              onParticipantStatusChange={updateParticipantStatus}
+            />
+          </div>
 
           {/* Feedback Section */}
-          <FeedbackForm
-            meetingId={currentMeeting?.id}
-            currentPhase={currentMeeting?.currentPhase || "check-in"}
-          />
+          <div className="flex-1 p-3 overflow-y-auto">
+            <FeedbackForm
+              meetingId={currentMeeting?.id}
+              currentPhase={currentMeeting?.currentPhase || "check-in"}
+            />
+          </div>
         </div>
       </div>
 

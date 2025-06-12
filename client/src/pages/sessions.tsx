@@ -219,7 +219,10 @@ export default function SessionsPage() {
                         <Input 
                           type="datetime-local" 
                           value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
-                          onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                          onChange={(e) => {
+                            const dateValue = e.target.value ? new Date(e.target.value) : null;
+                            field.onChange(dateValue);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -387,7 +390,10 @@ export default function SessionsPage() {
                       <Input 
                         type="datetime-local" 
                         value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
-                        onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                        onChange={(e) => {
+                          const dateValue = e.target.value ? new Date(e.target.value) : null;
+                          field.onChange(dateValue);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

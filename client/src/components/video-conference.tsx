@@ -253,7 +253,7 @@ export default function VideoConference({ roomId }: VideoConferenceProps) {
         </Button>
 
         <Button
-          onClick={disconnect}
+          onClick={handleDisconnect}
           variant="destructive"
           size="lg"
           className="rounded-full w-12 h-12 p-0"

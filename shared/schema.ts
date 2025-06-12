@@ -120,6 +120,8 @@ export const insertFeedbackSchema = createInsertSchema(feedback).omit({
 export const insertSessionSchema = createInsertSchema(sessions).omit({
   id: true,
   createdAt: true,
+}).extend({
+  scheduledAt: z.union([z.date(), z.string().transform(str => str ? new Date(str) : null)]).optional(),
 });
 
 export const updateSessionSchema = insertSessionSchema.partial();

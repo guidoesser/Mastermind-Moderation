@@ -5,7 +5,7 @@ import { Plus, Calendar, Users, FileText, CheckSquare, Edit, Trash2, ChevronRigh
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,12 +32,14 @@ export default function SessionsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions"] });
       setIsCreateDialogOpen(false);
+      form.reset();
       toast({
         title: "Session Created",
         description: "New session has been created successfully"
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Failed to create session:", error);
       toast({
         title: "Error",
         description: "Failed to create session",
@@ -161,6 +163,9 @@ export default function SessionsPage() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Create New Session</DialogTitle>
+              <DialogDescription>
+                Create a new mastermind session with agenda items and scheduling.
+              </DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -327,6 +332,9 @@ export default function SessionsPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Session</DialogTitle>
+            <DialogDescription>
+              Update the session details, schedule, and description.
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

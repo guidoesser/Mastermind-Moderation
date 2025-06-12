@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -272,6 +272,9 @@ export default function SessionDetailPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create New Agenda</DialogTitle>
+              <DialogDescription>
+                Add a new agenda item to organize your session topics and discussions.
+              </DialogDescription>
             </DialogHeader>
             <Form {...agendaForm}>
               <form onSubmit={agendaForm.handleSubmit((data) => createAgendaMutation.mutate({ ...data, sessionId }))} className="space-y-4">
@@ -550,6 +553,9 @@ export default function SessionDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Agenda Point</DialogTitle>
+            <DialogDescription>
+              Add a specific discussion point or topic to this agenda item.
+            </DialogDescription>
           </DialogHeader>
           <Form {...agendaPointForm}>
             <form onSubmit={agendaPointForm.handleSubmit((data) => createAgendaPointMutation.mutate(data))} className="space-y-4">
@@ -603,6 +609,9 @@ export default function SessionDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Action</DialogTitle>
+            <DialogDescription>
+              Create an actionable task with priority, assignee, and due date for this agenda point.
+            </DialogDescription>
           </DialogHeader>
           <Form {...actionForm}>
             <form onSubmit={actionForm.handleSubmit((data) => createActionMutation.mutate(data))} className="space-y-4">

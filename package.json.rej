@@ -1,7 +1,0 @@
-diff a/package.json b/package.json	(rejected hunks)
-@@ -0,0 +1,5 @@
-+  "dependencies": {
-+    "@fontsource/inter": "^5.0.17",
-+    "@fontsource/lexend": "^5.0.17",
-+    "tailwind-merge": "^2.2.1"
-+  }

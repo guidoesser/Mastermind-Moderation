@@ -7,10 +7,10 @@ interface AnimatedContainerProps {
   delay?: number;
 }
 
-export const AnimatedContainer = ({ 
-  children, 
-  className = "", 
-  delay = 0 
+export const AnimatedContainer = ({
+  children,
+  className = "",
+  delay = 0
 }: AnimatedContainerProps) => {
   return (
     <motion.div
@@ -25,10 +25,10 @@ export const AnimatedContainer = ({
   );
 };
 
-export const FadeIn = ({ 
-  children, 
-  className = "", 
-  delay = 0 
+export const FadeIn = ({
+  children,
+  className = "",
+  delay = 0
 }: AnimatedContainerProps) => {
   return (
     <motion.div
@@ -42,10 +42,10 @@ export const FadeIn = ({
   );
 };
 
-export const SlideIn = ({ 
-  children, 
-  className = "", 
-  delay = 0 
+export const SlideIn = ({
+  children,
+  className = "",
+  delay = 0
 }: AnimatedContainerProps) => {
   return (
     <motion.div

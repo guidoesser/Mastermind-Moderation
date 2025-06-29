@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "./Button";
+import { Button } from "./button";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -8,7 +8,7 @@ export function ThemeToggle() {
     // Check for dark mode preference
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
+
     if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
       setTheme("dark");
       document.documentElement.classList.add("dark");
@@ -22,7 +22,7 @@ export function ThemeToggle() {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    
+
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
